@@ -82,7 +82,7 @@ def getFBSearchPage(fb_login, page, month, year, destacadas):
     body = fb_login.find_element_by_xpath('//body')
     body.send_keys(Keys.TAB)
     body.send_keys(Keys.CONTROL + Keys.END)
-    for i in range(0, 18):
+    for i in range(0, 10):
         body.send_keys(Keys.ARROW_DOWN)
 
     search_date_more = fb_login.find_elements_by_class_name('_1u6r')[3]
@@ -92,8 +92,14 @@ def getFBSearchPage(fb_login, page, month, year, destacadas):
     body.send_keys(Keys.TAB)
     body.send_keys(Keys.TAB)
 
+    body.send_keys(Keys.ARROW_DOWN)
+
     year_count = datetime.now().year - int(year)
     for i in range(0, year_count + 1):
+        elem = fb_login.switch_to_active_element()
+        print(elem.text)
+        if elem.text == str(year):
+            break
         body.send_keys(Keys.ARROW_DOWN)
     body.send_keys(Keys.ENTER)
 
@@ -101,7 +107,7 @@ def getFBSearchPage(fb_login, page, month, year, destacadas):
 
     body.send_keys(Keys.TAB)
     body.send_keys(Keys.CONTROL + Keys.END)
-    for i in range(0, 18):
+    for i in range(0, 10):
         body.send_keys(Keys.ARROW_DOWN)
 
     search_date_more = fb_login.find_elements_by_class_name('_1u6r')[3]
@@ -112,6 +118,10 @@ def getFBSearchPage(fb_login, page, month, year, destacadas):
     # Empieza en enero
     month_count = int(month)
     for i in range(0, month_count):
+        elem = fb_login.switch_to_active_element()
+        print(elem.text)
+        if elem.text == str(month):
+            break
         body.send_keys(Keys.ARROW_DOWN)
     body.send_keys(Keys.ENTER)
     return fb_login
