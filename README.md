@@ -21,3 +21,8 @@ La instalacion puede hacerse utilizando pip de la siguiente manera:
 
 ## Configuracion
 El archivo config.json, permite configurar los datos de la cuenta de Facebook que se usara para recuperar los post. Tambien se puede configurar los nombres de los archivos de entrada y salida asi como el directorio base de esos archivos.
+
+## Windows
+Para ejecutar en windows hay que instalar el driver de selenium primero. Se puede usar la siguiente Guia: https://medium.com/ananoterminal/install-selenium-on-windows-f4b6bc6747e4
+Una vez instalado el driver, en el archivo de configuracion hay
+que ajustar los parametros gecko_binary y gecko_driver_exe con las rutas de los exes de Firefox y del driver respectivamente.

@@ -37,7 +37,9 @@ class ConfigManager():
         self.output_post_filename_prefix = None
         self.max_scroll = None
         self.shares_per_page = None
-
+        self.gecko_binary = None
+        self.gecko_driver_exe = None
+        self.gecko_headless = None
         self.loadConfigData()
 
     def loadConfigData(self):
@@ -53,6 +55,11 @@ class ConfigManager():
             self.fb_search_year = int(fbSection['search_year'])
             self.fb_search_month = int(fbSection['search_month'])
             self.shares_per_page = fbSection['shares_per_page']
+
+            fsWebDriver = filecontents['WebDriver'][0]
+            self.gecko_binary = fsWebDriver['gecko_binary']
+            self.gecko_driver_exe = fsWebDriver['gecko_driver_exe']
+            self.gecko_headless = fsWebDriver['gecko_headless']
 
             fsSection = filecontents['FileStorageConfig'][0]
             self.base_path = fsSection['base_path']

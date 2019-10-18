@@ -1,15 +1,23 @@
 {
   "FileStorageConfig": [
     {
-      "base_path": "~/Corpus/Recientes",
+      "base_path": "data",
       "input_filename": "ln_posts_input.csv",
       "output_filename": "ln_posts_output",
       "output_post_filename": "ln_posts_"
     }
   ],
+  "WebDriver" : 
+  [
+    {
+      "gecko_binary" : "C:\\Program Files\\Mozilla Firefox\\firefox.exe",
+      "gecko_driver_exe" : "C:\\geckodriver.exe",
+      "gecko_headless" : false
+    }
+  ],
   "facebook": [
     {
-      "user": "fb@user.com",
+      "user": "fb@mail.com",
       "password": "fbpassword",
       "avcode" : "1471326946", 
       "max_scroll" : 20,

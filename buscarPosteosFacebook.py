@@ -1,4 +1,5 @@
 import os
+import platform
 from datetime import datetime
 from time import sleep
 
@@ -6,26 +7,15 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 
 import ConfigManager
 import PostFacebook
 from OutputDataSetCSV import OuputDataSetCSV
 
 
-def getFBLogin(fb_user, fb_password, headless=False):
-    ffoptions = Options()
-    ffoptions.add_argument("--disable-notifications")
-    if headless:
-        ffoptions.headless = True
-
-    ffprofile = FirefoxProfile()
-    ffprofile.set_preference("dom.webnotifications.enabled", False)
-
-    driver = webdriver.Firefox(options=ffoptions, firefox_profile=ffprofile)
-    driver.get('https://www.facebook.com/login/')
-    print("Opened facebook...")
-    sleep(5)
-
+def getFBLogin(fb_user, fb_password, gecko_binary, gecko_driver_exe, headless=False):
+    driver = getFBPage('https://www.facebook.com/login/', gecko_binary, gecko_driver_exe, headless)
     body = driver.find_element_by_xpath('//body')
     body.send_keys(fb_user)
     body.send_keys(Keys.TAB)
@@ -37,7 +27,7 @@ def getFBLogin(fb_user, fb_password, headless=False):
     return driver
 
 
-def getFBPage(url, headless=False):
+def getFBPage(url, gecko_binary, gecko_driver_exe, headless=False):
     ffoptions = Options()
     ffoptions.add_argument("--disable-notifications")
     if headless:
@@ -46,9 +36,14 @@ def getFBPage(url, headless=False):
     ffprofile = FirefoxProfile()
     ffprofile.set_preference("dom.webnotifications.enabled", False)
 
-    driver = webdriver.Firefox(options=ffoptions, firefox_profile=ffprofile)
+    if platform.system() == 'Windows':
+        binary = FirefoxBinary(gecko_binary)
+        driver = webdriver.Firefox(firefox_binary=binary, executable_path=gecko_driver_exe, options=ffoptions, firefox_profile=ffprofile)
+    else:
+        driver = webdriver.Firefox(options=ffoptions, firefox_profile=ffprofile)
+
     driver.get(url)
-    print("Opened url...")
+    print("Opened url: " + str(url))
     sleep(5)
     return driver
 
@@ -82,7 +77,7 @@ def getFBSearchPage(fb_login, page, month, year, destacadas):
     body = fb_login.find_element_by_xpath('//body')
     body.send_keys(Keys.TAB)
     body.send_keys(Keys.CONTROL + Keys.END)
-    for i in range(0, 10):
+    for i in range(0, 5):
         body.send_keys(Keys.ARROW_DOWN)
 
     search_date_more = fb_login.find_elements_by_class_name('_1u6r')[3]
@@ -91,8 +86,6 @@ def getFBSearchPage(fb_login, page, month, year, destacadas):
     # Primero el año
     body.send_keys(Keys.TAB)
     body.send_keys(Keys.TAB)
-
-    body.send_keys(Keys.ARROW_DOWN)
 
     year_count = datetime.now().year - int(year)
     for i in range(0, year_count + 1):
@@ -107,7 +100,7 @@ def getFBSearchPage(fb_login, page, month, year, destacadas):
 
     body.send_keys(Keys.TAB)
     body.send_keys(Keys.CONTROL + Keys.END)
-    for i in range(0, 10):
+    for i in range(0, 5):
         body.send_keys(Keys.ARROW_DOWN)
 
     search_date_more = fb_login.find_elements_by_class_name('_1u6r')[3]
@@ -172,15 +165,13 @@ def exportNetvizzCsv(config, posts_links):
     columns = ['type', 'medio', 'by', 'post_id', 'post_link', 'post_message', 'picture', 'full_picture', 'link', 'link_domain', 'post_published', 'post_published_unix', 'post_published_sql', 'post_hora_argentina', 'like_count_fb', 'comments_count_fb', 'reactions_count_fb', 'shares_count_fb', 'engagement_fb', 'rea_LIKE', 'rea_LOVE', 'rea_WOW', 'rea_HAHA', 'rea_SAD', 'rea_ANGRY', 'post_picture_descripcion', 'poll_count', 'titulo_link', 'subtitulo_link', 'menciones', 'hashtags', 'video_plays_count', 'fb_action_tags_text', 'has_emoji', 'tiene_hashtags', 'tiene_menciones']
     posts_fb = OuputDataSetCSV(config.output_filename, columns)
 
-    fb_login = getFBLogin(config.fb_username, config.fb_password)
-
+    fb_login = getFBLogin(config.fb_username, config.fb_password, config.gecko_binary, config.gecko_driver_exe, config.gecko_headless)
     i = 0
     for post_link, html_preview in posts_links:
         i = i + 1
         print("Post " + str(i))
         print("URL: " + post_link)
         try:
-
             post = PostFacebook.PostFacebook(post_link, fb_login, html_preview)
             post.SaveHtml(config.base_path)
             posts = post.ParsePostHTML()
@@ -197,7 +188,7 @@ def exportNetvizzCsv(config, posts_links):
 # Programa Principal
 config = ConfigManager.ConfigManager()
 
-fb_login = getFBLogin(config.fb_username, config.fb_password)
+fb_login = getFBLogin(config.fb_username, config.fb_password, config.gecko_binary, config.gecko_driver_exe, config.gecko_headless)
 posts_links_total = []
 destacadas = 0
 
