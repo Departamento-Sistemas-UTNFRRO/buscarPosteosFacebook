@@ -20,7 +20,18 @@ La instalacion puede hacerse utilizando pip de la siguiente manera:
 
 
 ## Configuracion
-El archivo config.json, permite configurar los datos de la cuenta de Facebook que se usara para recuperar los post. Tambien se puede configurar los nombres de los archivos de entrada y salida asi como el directorio base de esos archivos.
+El archivo config.json, permite configurar la herramienta para recuperar los post.
+Las opciones que se pueden configurar son:
+- base_path: indica la ruta/directorio donde se guardaran los archivos de salida. Por defecto es la carpeta “data” dentro de la herramienta.
+- output_filename: nombre del archivo de salida del listado de posteos recuperado. Por defecto, se llama “posts_output.csv
+- output_post_filename: nombre del archivo de salida de cada posteo en HTML. Por defecto, se llama “ln_post_.html
+- gecko_binary: Ruta al archivo exe del navegador Firefox.
+- gecko_driver_exe: Ruta al archivo del archivo exe del driver de selenium. Viene incluido en el paquete de la herramienta y no debería cambiarse.
+- user y password: Usuario y Contraseña de Facebook para el login.
+- max_scroll: Cantidad máxima de scroll por página de búsqueda.
+- page_name: Nombre de la página de Facebook para buscar posts. 
+- search_year y search_month: Año y mes a buscar. Como Facebook limita la actividad automática lo mejor es buscar un mes y después esperar un rato (20 minutos) y retomar con otro mes.
+
 
 ## Windows
 Para ejecutar en windows hay que instalar el driver de selenium primero. Se puede usar la siguiente Guia: https://medium.com/ananoterminal/install-selenium-on-windows-f4b6bc6747e4
