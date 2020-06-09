@@ -121,8 +121,12 @@ def getFBPostsLinks(driver, scroll_count):
 
     posts_links = []
     for html_preview in posts:
-        link = html_preview.find_element_by_class_name('_lie')
-        posts_links.append((link.get_attribute("href"), html_preview.get_attribute("innerHTML")))
+        links = html_preview.find_elements_by_css_selector("a[href]")
+        for link in links:
+            href = link.get_attribute("href")
+            if 'posts' in href:
+                print(href)
+                posts_links.append((href, html_preview.get_attribute("innerHTML")))
 
     return posts_links
 
@@ -172,18 +176,16 @@ def exportNetvizzCsv(config, posts_links):
 config = ConfigManager.ConfigManager()
 
 driver = getFBLogin(config.fb_username, config.fb_password, config.gecko_binary, config.gecko_driver_exe, config.gecko_headless)
-posts_links_total = []
+posts_links = []
 
 try:
     fb_search = getFBSearchPage(driver, config.fb_page_name,
                                 config.fb_search_year)
     posts_links = getFBPostsLinks(fb_search, config.max_scroll)
-    for post_link in posts_links:
-        posts_links_total.append(post_link)
 except Exception as ex:
     print("ERROR" + str(ex))
 
-exportLinksCsv(config, posts_links_total)
-print('Post Count: ', len(posts_links_total))
+exportLinksCsv(config, posts_links)
+print('Post Count: ', len(posts_links))
 driver.quit()
-exportNetvizzCsv(config, posts_links_total)
+exportNetvizzCsv(config, posts_links)
