@@ -15,6 +15,7 @@ La instalacion puede hacerse utilizando pip de la siguiente manera:
 - \# pip3 install pandas
 - \# pip3 install selenium
 - \# pip3 install bs4
+- \# pip3 install lxml
 - \# installgeckodriver.sh
 
 
