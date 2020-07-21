@@ -87,13 +87,11 @@ def getFBSearchPage(driver, page, year):
     sleep(52)
     elem = driver.switch_to_active_element()
     elem.send_keys(' ' + page)
-    #elem.send_keys(page)
+
     sleep(2)
     elem = driver.switch_to.active_element
     elem.send_keys(Keys.ARROW_DOWN)
 
-# <li aria-selected="false" class="k4urcfbm" id="{&quot;name&quot;:&quot;author&quot;,&quot;args&quot;:&quot;71339054219&quot;}" role="option"><div class="bp9cbjyn nhd2j8a9 j83agx80 ni8dbmo4 stjgntxs l9j0dhe7 ue3kfks5 pw54ja7n uo3d90p7 l82x9zwi"><div aria-label="LA NACION" class="oajrlxb2 gs1a9yip g5ia77u1 mtkw9kbi tlpljxtp qensuy8j ppp5ayq2 goun2846 ccm00jje s44p3ltw mk2mc5f4 rt8b4zig n8ej3o3l agehan2d sk4xxmp2 rq0escxv nhd2j8a9 j83agx80 mg4g778l btwxx1t3 pfnyh3mw p7hjln8o kvgmc6g5 cxmmr5t8 oygrvhab hcukyx3x tgvbjcpo hpfvmrgz jb3vyjys rz4wbd8a qt6c0cv9 a8nywdso l9j0dhe7 i1ao9s8h esuyzwwr f1sip0of du4w35lb lzcic4wl abiwlrkh p8dawk7l k4urcfbm" role="button" tabindex="-1"><div class="j83agx80 oo9gr5id buofh1pr ni8dbmo4 stjgntxs cxgpxx05 dflh9lhu sj5x9vvc scb9dxdr"><div class="hpfvmrgz g5gj957u buofh1pr rj1gh0hx o8rfisnq"><div class="i1fnvgqd btwxx1t3 j83agx80"><div class="a8nywdso r8blr3vg rz4wbd8a jwdofwj8 stjgntxs ni8dbmo4 dumg13m2 jifvfom9 btwxx1t3 j83agx80"><div class="b3onmgus"><div class="l9j0dhe7"><img class="a8c37x1j ue3kfks5 pw54ja7n uo3d90p7 l82x9zwi" src="https://scontent.fros1-1.fna.fbcdn.net/v/t1.0-1/cp0/p50x50/68688198_10157208774494220_3978553868437946368_n.jpg?_nc_cat=1&amp;_nc_sid=1eb0c7&amp;_nc_ohc=GzlSyzuZaMMAX9qZ9Lv&amp;_nc_ht=scontent.fros1-1.fna&amp;oh=4e632223b23094f9cb2203882142bd75&amp;oe=5EFF1BEC" alt="" width="36" height="36"><div class="oaz4zybt pmk7jnqg j9ispegn kr520xx4 ue3kfks5 pw54ja7n uo3d90p7 l82x9zwi" style="height: 36px; width: 36px;"></div></div></div><div class="ni8dbmo4 kwzhilbh cbu4d94t j83agx80"><div class="hzawbc8m tw6a2znq"><span class="oi732d6d ik7dh3pa d2edcug0 qv66sw1b c1et5uql a8c37x1j muag1w35 ew0dbk1b jq4qci2q a3bd9o3v knj5qynh oo9gr5id ni8dbmo4 stjgntxs ltmttdrg g0qnabr5" dir="auto">LA NACION</span></div></div></div></div></div></div></div><div class=""></div></div></li>    
-# search_textbox = driver.find_elements_by_css_selector("input[type='search'][aria-label='Elige un origen...']")
     search_textbox = driver.find_elements_by_css_selector("li.k4urcfbm[role='option']")
     for elem in search_textbox:
         if elem.text.upper() == page.upper():
