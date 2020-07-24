@@ -19,6 +19,7 @@
 import urllib.request
 import bs4
 import os
+import locale
 from time import sleep
 from datetime import datetime, timedelta
 from FacebookStringToNumber import FacebookStringToNumber
@@ -46,18 +47,10 @@ class PostFacebook():
         sleep(1)
 
         try:
-            post = self.fb_login.find_element_by_css_selector('._5pcr.userContentWrapper')
+            post = self.fb_login.find_element_by_css_selector('.du4w35lb.l9j0dhe7')
             html = post.get_attribute("innerHTML")
         except Exception as ex:
-            try:
-                post = self.fb_login.find_element_by_css_selector('._wyj._20nr')
-                html = post.get_attribute("innerHTML")
-            except Exception as ex:
-                try:
-                    post = self.fb_login.find_element_by_css_selector('._5-g_._3qw')
-                    html = post.get_attribute("innerHTML")
-                except Exception as ex:
-                    print("ERROR" + str(ex))
+            print("ERROR" + str(ex))
         return html
 
     def _getHtmlPost(self, html_raw):
@@ -103,15 +96,15 @@ class PostFacebook():
         link = ''
         link_domain = ''
         poll_count = 0
-        link_div = self.html_bs.find_all('div', {'class': '_6ks'})
+        link_div = self.html_bs.find_all('a', {'class': 'oajrlxb2 g5ia77u1 qu0x051f esr5mh6w e9989ue4 r7d6kgcz rq0escxv nhd2j8a9 nc684nl6 p7hjln8o kvgmc6g5 cxmmr5t8 oygrvhab hcukyx3x jb3vyjys rz4wbd8a qt6c0cv9 a8nywdso i1ao9s8h esuyzwwr f1sip0of lzcic4wl gmql0nx0 gpro0wi8 datstx6m k4urcfbm'})
         if link_div:
-            a_link_tag = link_div[0].find_all('a')
-            a_link_href = a_link_tag[0].get('href')
+            a_link_tag = link_div[0]
+            a_link_href = a_link_tag.get('href')
             a_link_url_query = urllib.parse.urlsplit(a_link_href).query
             link_dict = urllib.parse.parse_qs(a_link_url_query)
             link = link_dict.get('u', [''])[0]
             # link_domain
-            link_domain_div = self.html_bs.find_all('div', {'class': '_6lz _6mb _1t62 ellipsis'})
+            link_domain_div = self.html_bs.find_all('span', {'class': 'oi732d6d ik7dh3pa d2edcug0 qv66sw1b c1et5uql a8c37x1j hop8lmos enqfppq2 e9vueds3 j5wam9gi knj5qynh m9osqain ni8dbmo4 stjgntxs ltmttdrg g0qnabr5'})
             if link_domain_div:
                 link_domain = link_domain_div[0].getText()
             posts[0] = 'link'
@@ -201,31 +194,37 @@ class PostFacebook():
         posts.append(titulo)
         posts.append(subtitulo_post)
 
-        mencionesLista, hashtagsLista = self.getMencionesHashtags()
-        posts.append(mencionesLista)
-        posts.append(hashtagsLista)
+        #mencionesLista, hashtagsLista = self.getMencionesHashtags()
+        #posts.append(mencionesLista)
+        #posts.append(hashtagsLista)
 
-        video_plays_count = self.getVideosPlaysCount(self.fbStringToNumber)
-        posts.append(video_plays_count)
+        #video_plays_count = self.getVideosPlaysCount(self.fbStringToNumber)
+        #posts.append(video_plays_count)
 
-        fb_action_tags_text = self.getFBActionTagsText()
-        posts.append(fb_action_tags_text)
+        #fb_action_tags_text = self.getFBActionTagsText()
+        #posts.append(fb_action_tags_text)
 
-        has_emoji = self.getHasEmoji()
-        posts.append(has_emoji)
+        #has_emoji = self.getHasEmoji()
+        #posts.append(has_emoji)
 
-        tiene_hashtags = self.getTieneHashtags(hashtagsLista)
+        #tiene_hashtags = self.getTieneHashtags(hashtagsLista)
 
-        posts.append(tiene_hashtags)
+        #posts.append(tiene_hashtags)
 
-        tiene_menciones = self.getTieneHashtags(mencionesLista)
+        #tiene_menciones = self.getTieneHashtags(mencionesLista)
 
-        posts.append(tiene_menciones)
+        #posts.append(tiene_menciones)
         return posts
 
     def getPostDate(self, html_bs):
-        abbr_date = html_bs.select('abbr[data-utime]')
-        post_published_unix = abbr_date[0].get('data-utime')
+        a_date = self.html_bs.find_all('a', {'class': 'oajrlxb2 g5ia77u1 qu0x051f esr5mh6w e9989ue4 r7d6kgcz rq0escxv nhd2j8a9 nc684nl6 p7hjln8o kvgmc6g5 cxmmr5t8 oygrvhab hcukyx3x jb3vyjys rz4wbd8a qt6c0cv9 a8nywdso i1ao9s8h esuyzwwr f1sip0of lzcic4wl gmql0nx0 gpro0wi8 b1v8xokw'})
+        locale.setlocale(locale.LC_TIME, 'es_AR')
+        a_date_text = a_date[0].getText()
+        a_date_text = a_date_text.replace('de', '')
+        a_date_text = a_date_text.strip()
+        post_date = datetime.strptime(a_date_text, '%d %B %Y')+ timedelta(hours=3)
+        
+        post_published_unix = datetime.timestamp(post_date)
         post_date = datetime.utcfromtimestamp(int(post_published_unix))
 
         post_date_argentina = post_date.strftime('%Y-%m-%d %H:%M:%S')
@@ -242,13 +241,10 @@ class PostFacebook():
         return link
 
     def getPageName(self):
-        medio_span = self.html_bs.find_all('span', {'class': 'fwb'})
+        medio_span = self.html_bs.find_all('a', {'class': 'oajrlxb2 g5ia77u1 qu0x051f esr5mh6w e9989ue4 r7d6kgcz rq0escxv nhd2j8a9 nc684nl6 p7hjln8o kvgmc6g5 cxmmr5t8 oygrvhab hcukyx3x jb3vyjys rz4wbd8a qt6c0cv9 a8nywdso i1ao9s8h esuyzwwr f1sip0of lzcic4wl oo9gr5id gpro0wi8 lrazzd5p'})
         medio_span_text = None
         if medio_span:
             medio_span_text = medio_span[0].getText()
-        else:
-            medio_span = self.html_bs.select('a[uid]')
-            medio_span_text = medio_span[1].getText()
         return medio_span_text
 
     def getTieneHashtags(self, hashtagsLista):
@@ -259,7 +255,7 @@ class PostFacebook():
 
     def getHasEmoji(self):
         has_emoji = False
-        emoji_tags = self.html_bs.find_all('span', {'class': '_6qdm'})
+        emoji_tags = self.html_bs.find_all('span', {'class': 'q9uorilb tbxw36s4 knj5qynh kvgmc6g5 ditlmg2l oygrvhab nvdbi5me fgm26odu gl3lb2sf hhz5lgdu'})
         if emoji_tags:
             has_emoji = True
         return has_emoji
@@ -301,14 +297,11 @@ class PostFacebook():
 
     def getSubtituloLink(self):
         subtitulo_post = ""
-        divSubtitulo = self.html_bs.find_all('div', {'class': '_6m7 _3bt9'})
-        if divSubtitulo:
-            subtitulo_post = divSubtitulo[0].getText()
         return subtitulo_post
 
     def getTituloLink(self):
         titulo = ""
-        divTitulo = self.html_bs.find_all('div', {'class': 'mbs _6m6 _2cnj _5s6c'})
+        divTitulo = self.html_bs.find_all('div', {'class': 'l9j0dhe7 stjgntxs ni8dbmo4'})
 
         # Si la lista no esta vacia, tengo un titulo
         if divTitulo:
@@ -317,16 +310,16 @@ class PostFacebook():
 
     def getSharesCount(self, fbStringToNumber):
         shares_count = 0
-        shares_count_a = self.html_preview_bs.find_all('a', {'class': '_3rwx _42ft'})
+        shares_count_a = self.html_bs.find_all('span', {'class': 'oi732d6d ik7dh3pa d2edcug0 qv66sw1b c1et5uql a8c37x1j muag1w35 ew0dbk1b jq4qci2q a3bd9o3v knj5qynh m9osqain'})
         if shares_count_a:
-            shares_count_a_text = shares_count_a[0].getText()
+            shares_count_a_text = shares_count_a[1].getText()
             shares_count_text = shares_count_a_text.replace(' veces compartido', '').replace(' vez compartido', '')
             shares_count = fbStringToNumber.convertStringToNumber(shares_count_text)
         return shares_count
 
     def getReactionsCount(self, fbStringToNumber):
         reactions_count = 0
-        reactions_count_span = self.html_preview_bs.find_all('span', {'class': '_81hb'})
+        reactions_count_span = self.html_preview_bs.find_all('span', {'class': 'pcp91wgn'})
         if reactions_count_span:
             reactions_count_text = reactions_count_span[0].getText()
             reactions_count = fbStringToNumber.convertStringToNumber(reactions_count_text)
@@ -334,7 +327,7 @@ class PostFacebook():
 
     def getCommentsCount(self, fbStringToNumber):
         comments_count = 0
-        comments_count_a = self.html_preview_bs.find_all('a', {'class': '_3hg- _42ft'})
+        comments_count_a = self.html_preview_bs.find_all('span', {'class': 'oi732d6d ik7dh3pa d2edcug0 qv66sw1b c1et5uql a8c37x1j muag1w35 ew0dbk1b jq4qci2q a3bd9o3v knj5qynh m9osqain'})
         if comments_count_a:
             comments_count_a_text = comments_count_a[0].getText()
             comments_count_text = comments_count_a_text.replace(' comentarios', '').replace(' comentario', '')
@@ -345,51 +338,48 @@ class PostFacebook():
         return "https://www.facebook.com/" + page_id + "/posts/" + post_id + "/"
 
     def getPostID(self):
-        post_id_div = self.html_bs.find_all('div', {'class': '_5pcp _5lel _2jyu _232_'})
-        if post_id_div:
-            feed_id = post_id_div[0].get("id")
-            page_id = feed_id.split(';')[0]
-            page_id_split = page_id.split('_')
-            page_id = page_id_split[2]
-            post_id = feed_id.split(';')[1]
-        else:
-            post_id = self.urlLink.split('/')[-2]
-            page_id = self.html_bs.select('a[uid]')[1].get("uid")
-
+        page_id = self.urlLink.replace('https://www.facebook.com/', '')
+        page_id_split = page_id.split('/')
+        page_id = page_id_split[0]
+        post_id = page_id_split[2]
         return post_id, page_id
 
     def getPicture(self):
         picture = ''
 
-        picture_img = self.html_preview_bs.find_all('img', {'class': '_3chq'})
+        picture_img = self.html_preview_bs.find_all('img', {'class': 'a8c37x1j bixrwtb6'})
         if picture_img:
             picture = picture_img[0].get('src')
+            return picture
+        
+        picture_img_div = self.html_preview_bs.find_all('div', {'class': 'aph9nnby ni8dbmo4 stjgntxs l9j0dhe7 ue3kfks5 pw54ja7n uo3d90p7 l82x9zwi'})
+        if picture_img_div:
+            picture_img = picture_img_div[0].find_all('img')
+            if picture_img:
+                picture = picture_img[0].get('src')
+
         return picture
 
     def getFullPicture(self):
         full_picture = ''
         post_picture_descripcion = ''
-        full_picture_img = self.html_bs.find_all('img', {'class': 'scaledImageFitWidth'})
+        full_picture_img = self.html_bs.find_all('img', {'class': 'i09qtzwb n7fi1qx3 datstx6m pmk7jnqg j9ispegn kr520xx4 k4urcfbm bixrwtb6'})
         if full_picture_img:
             full_picture = full_picture_img[0].get('src')
-            post_picture_descripcion = full_picture_img[0].get('aria-label')
+            post_picture_descripcion = full_picture_img[0].get('alt')
         return full_picture, post_picture_descripcion
 
     def getPostMessage(self):
         post_message = ''
 
-        post_message_div = self.html_bs.find_all('div', {'class': '_7grk'})
+        post_message_div = self.html_bs.find_all('div', {'data-ad-comet-preview': 'message'})
         if post_message_div:
-            return post_message_div[0].get("title")
-
-        post_message_div = self.html_bs.find_all('div', {'class': '_5pbx userContent _3576'})
-        if post_message_div:
-            post_message = post_message_div[0].find_all('p')[0].getText()
+            post_message = post_message_div[0].getText()
         
         return post_message
 
     def getReactions(self, fbStringToNumber):
-        reaction_count_tags = self.html_preview_bs.find_all('a', {'class': '_1n9l'})
+        reaction_count_tags = self.html_preview_bs.find_all('div', {'class': 'oajrlxb2 g5ia77u1 qu0x051f esr5mh6w e9989ue4 r7d6kgcz rq0escxv nhd2j8a9 nc684nl6 p7hjln8o kvgmc6g5 cxmmr5t8 oygrvhab hcukyx3x jb3vyjys rz4wbd8a qt6c0cv9 a8nywdso i1ao9s8h esuyzwwr f1sip0of lzcic4wl l9j0dhe7 abiwlrkh p8dawk7l'})
 
         like_count_fb = 0
         rea_LOVE = 0
@@ -400,21 +390,21 @@ class PostFacebook():
         for a in reaction_count_tags:
             reaction_label = a.get('aria-label')
             if 'Me entristece' in reaction_label:
-                reaction_label = reaction_label.replace(' Me entristece', '')
+                reaction_label = reaction_label.replace('Me entristece:', '').strip()
                 rea_SAD = fbStringToNumber.convertStringToNumber(reaction_label)
             elif 'Me divierte' in reaction_label:
-                reaction_label = reaction_label.replace(' Me divierte', '')
+                reaction_label = reaction_label.replace('Me divierte:', '').strip()
                 rea_HAHA = fbStringToNumber.convertStringToNumber(reaction_label)
             elif 'Me encanta' in reaction_label:
-                reaction_label = reaction_label.replace(' Me encanta', '')
+                reaction_label = reaction_label.replace('Me encanta:', '').strip()
                 rea_LOVE = fbStringToNumber.convertStringToNumber(reaction_label)
             elif 'Me asombra' in reaction_label:
-                reaction_label = reaction_label.replace(' Me asombra', '')
+                reaction_label = reaction_label.replace('Me asombra:', '').strip()
                 rea_WOW = fbStringToNumber.convertStringToNumber(reaction_label)
             elif 'Me enoja' in reaction_label:
-                reaction_label = reaction_label.replace(' Me enoja', '')
+                reaction_label = reaction_label.replace('Me enoja:', '').strip()
                 rea_ANGRY = fbStringToNumber.convertStringToNumber(reaction_label)
             elif 'Me gusta' in reaction_label:
-                reaction_label = reaction_label.replace(' Me gusta', '')
+                reaction_label = reaction_label.replace('Me gusta:', '').strip()
                 like_count_fb = fbStringToNumber.convertStringToNumber(reaction_label)
         return like_count_fb, rea_LOVE, rea_WOW, rea_HAHA, rea_SAD, rea_ANGRY

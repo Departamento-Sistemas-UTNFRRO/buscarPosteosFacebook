@@ -23,7 +23,7 @@ def getFBLogin(fb_user, fb_password, gecko_binary, gecko_driver_exe, headless=Fa
     body.send_keys(Keys.TAB)
     body.send_keys(Keys.ENTER)
     print("Facebook login...")
-    sleep(7)
+    sleep(20)
     return driver
 
 
@@ -84,7 +84,7 @@ def getFBSearchPage(driver, page, year):
         elem.send_keys(Keys.TAB)
         sleep(1)
 
-    sleep(52)
+    sleep(20)
     elem = driver.switch_to_active_element()
     elem.send_keys(' ' + page)
 

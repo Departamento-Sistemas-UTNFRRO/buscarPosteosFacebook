@@ -103,3 +103,4 @@ data/*.csv
 
 #ignorar los datos recolectados
 Corpus/*
+data/*.html
