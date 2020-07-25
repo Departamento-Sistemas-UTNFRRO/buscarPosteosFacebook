@@ -189,31 +189,31 @@ class PostFacebook():
         posts.append(poll_count)
 
         titulo = self.getTituloLink()
-        subtitulo_post = self.getSubtituloLink()
+        subtitulo_post = "" #no existe mas este dato
 
         posts.append(titulo)
         posts.append(subtitulo_post)
 
-        #mencionesLista, hashtagsLista = self.getMencionesHashtags()
-        #posts.append(mencionesLista)
-        #posts.append(hashtagsLista)
+        mencionesLista, hashtagsLista = self.getMencionesHashtags()
+        posts.append(mencionesLista)
+        posts.append(hashtagsLista)
 
-        #video_plays_count = self.getVideosPlaysCount(self.fbStringToNumber)
-        #posts.append(video_plays_count)
+        video_plays_count = self.getVideosPlaysCount(self.fbStringToNumber)
+        posts.append(video_plays_count)
 
-        #fb_action_tags_text = self.getFBActionTagsText()
-        #posts.append(fb_action_tags_text)
+        fb_action_tags_text = self.getFBActionTagsText()
+        posts.append(fb_action_tags_text)
 
-        #has_emoji = self.getHasEmoji()
-        #posts.append(has_emoji)
+        has_emoji = self.getHasEmoji()
+        posts.append(has_emoji)
 
-        #tiene_hashtags = self.getTieneHashtags(hashtagsLista)
+        tiene_hashtags = self.getTieneHashtags(hashtagsLista)
 
-        #posts.append(tiene_hashtags)
+        posts.append(tiene_hashtags)
 
-        #tiene_menciones = self.getTieneHashtags(mencionesLista)
+        tiene_menciones = self.getTieneHashtags(mencionesLista)
 
-        #posts.append(tiene_menciones)
+        posts.append(tiene_menciones)
         return posts
 
     def getPostDate(self, html_bs):
@@ -255,9 +255,11 @@ class PostFacebook():
 
     def getHasEmoji(self):
         has_emoji = False
-        emoji_tags = self.html_bs.find_all('span', {'class': 'q9uorilb tbxw36s4 knj5qynh kvgmc6g5 ditlmg2l oygrvhab nvdbi5me fgm26odu gl3lb2sf hhz5lgdu'})
-        if emoji_tags:
-            has_emoji = True
+        post_message_div = self.html_bs.find_all('div', {'data-ad-comet-preview': 'message'})
+        if post_message_div:
+            emoji_tags = post_message_div[0].find_all('span', {'class': 'q9uorilb tbxw36s4 knj5qynh kvgmc6g5 ditlmg2l oygrvhab nvdbi5me fgm26odu gl3lb2sf hhz5lgdu'})
+            if emoji_tags:
+                has_emoji = True
         return has_emoji
 
     def getFBActionTagsText(self):
@@ -284,20 +286,16 @@ class PostFacebook():
     def getMencionesHashtags(self):
         mencionesLista = []
         hashtagsLista = []
-        post_message_html = self.html_bs.find_all('div', {'class': '_5pbx userContent _3576'})
-        for tag in post_message_html:
-            menciones = tag.find_all('a', {'class': 'profileLink'})
+        post_message_html = self.html_bs.find_all('div', {'data-ad-comet-preview': 'message'})
+        if post_message_html:
+            menciones = post_message_html[0].find_all('a', {'class': 'oajrlxb2 g5ia77u1 qu0x051f esr5mh6w e9989ue4 r7d6kgcz rq0escxv nhd2j8a9 nc684nl6 p7hjln8o kvgmc6g5 cxmmr5t8 oygrvhab hcukyx3x jb3vyjys rz4wbd8a qt6c0cv9 a8nywdso i1ao9s8h esuyzwwr f1sip0of lzcic4wl q66pz984 gpro0wi8 b1v8xokw'})
             for mencion in menciones:
                 mencionesLista.append(mencion.getText())
 
-            hashtags = tag.find_all('span', {'class': '_58cm'})
+            hashtags = post_message_html[0].find_all('span', {'class': '_58cm'})
             for hashtag in hashtags:
                 hashtagsLista.append(hashtag.getText())
         return mencionesLista, hashtagsLista
-
-    def getSubtituloLink(self):
-        subtitulo_post = ""
-        return subtitulo_post
 
     def getTituloLink(self):
         titulo = ""
@@ -352,11 +350,14 @@ class PostFacebook():
             picture = picture_img[0].get('src')
             return picture
         
-        picture_img_div = self.html_preview_bs.find_all('div', {'class': 'aph9nnby ni8dbmo4 stjgntxs l9j0dhe7 ue3kfks5 pw54ja7n uo3d90p7 l82x9zwi'})
+        picture_img_div = self.html_preview_bs.find_all('div', {'class': 'l9j0dhe7 pfnyh3mw aph9nnby'})
         if picture_img_div:
             picture_img = picture_img_div[0].find_all('img')
             if picture_img:
                 picture = picture_img[0].get('src')
+                a_link_url_query = urllib.parse.urlsplit(picture).query
+                link_dict = urllib.parse.parse_qs(a_link_url_query)
+                picture = link_dict.get('url', [''])[0]
 
         return picture
 
@@ -366,6 +367,9 @@ class PostFacebook():
         full_picture_img = self.html_bs.find_all('img', {'class': 'i09qtzwb n7fi1qx3 datstx6m pmk7jnqg j9ispegn kr520xx4 k4urcfbm bixrwtb6'})
         if full_picture_img:
             full_picture = full_picture_img[0].get('src')
+            a_link_url_query = urllib.parse.urlsplit(full_picture).query
+            link_dict = urllib.parse.parse_qs(a_link_url_query)
+            full_picture = link_dict.get('url', [''])[0]
             post_picture_descripcion = full_picture_img[0].get('alt')
         return full_picture, post_picture_descripcion
 
