@@ -150,7 +150,7 @@ class PostFacebook():
         posts.append(link_domain)
 
         # post_published
-        post_published_str, post_published_unix, post_published_sql, post_date_argentina = self.getPostDate(self.html_preview_bs)
+        post_published_str, post_published_unix, post_published_sql, post_date_argentina = self.getPostDate()
         posts.append(post_published_str) 
         posts.append(post_published_unix)
         posts.append(post_published_sql)
@@ -216,22 +216,23 @@ class PostFacebook():
         posts.append(tiene_menciones)
         return posts
 
-    def getPostDate(self, html_bs):
-        a_date = self.html_bs.find_all('a', {'class': 'oajrlxb2 g5ia77u1 qu0x051f esr5mh6w e9989ue4 r7d6kgcz rq0escxv nhd2j8a9 nc684nl6 p7hjln8o kvgmc6g5 cxmmr5t8 oygrvhab hcukyx3x jb3vyjys rz4wbd8a qt6c0cv9 a8nywdso i1ao9s8h esuyzwwr f1sip0of lzcic4wl gmql0nx0 gpro0wi8 b1v8xokw'})
+    def getPostDate(self):
         locale.setlocale(locale.LC_TIME, 'es_AR')
-        a_date_text = a_date[0].getText()
-        a_date_text = a_date_text.replace('de', '')
-        a_date_text = a_date_text.strip()
-        post_date = datetime.strptime(a_date_text, '%d %B %Y')+ timedelta(hours=3)
-        
-        post_published_unix = datetime.timestamp(post_date)
-        post_date = datetime.utcfromtimestamp(int(post_published_unix))
+        a_date = self.html_bs.find_all('a', {'class': 'oajrlxb2 g5ia77u1 qu0x051f esr5mh6w e9989ue4 r7d6kgcz rq0escxv nhd2j8a9 nc684nl6 p7hjln8o kvgmc6g5 cxmmr5t8 oygrvhab hcukyx3x jb3vyjys rz4wbd8a qt6c0cv9 a8nywdso i1ao9s8h esuyzwwr f1sip0of lzcic4wl gmql0nx0 gpro0wi8 b1v8xokw'})
+        if a_date:
+            a_date_text = a_date[0].getText()
+            a_date_text = a_date_text.replace('de', '')
+            a_date_text = a_date_text.strip()
+            post_date = datetime.strptime(a_date_text, '%d %B %Y')+ timedelta(hours=3)
+            
+            post_published_unix = datetime.timestamp(post_date)
+            post_date = datetime.utcfromtimestamp(int(post_published_unix))
 
-        post_date_argentina = post_date.strftime('%Y-%m-%d %H:%M:%S')
-        post_published = post_date + timedelta(hours=-3)
-        post_published_sql = post_published.strftime("%Y-%m-%d %H:%M:%S")
-        
-        post_published_str = post_published.replace(microsecond=0).isoformat() + "+0000"
+            post_date_argentina = post_date.strftime('%Y-%m-%d %H:%M:%S')
+            post_published = post_date + timedelta(hours=-3)
+            post_published_sql = post_published.strftime("%Y-%m-%d %H:%M:%S")
+            
+            post_published_str = post_published.replace(microsecond=0).isoformat() + "+0000"
         return post_published_str, post_published_unix, post_published_sql, post_date_argentina
 
     def getVideoLink(self, link_video):
