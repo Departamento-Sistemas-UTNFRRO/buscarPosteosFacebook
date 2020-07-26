@@ -104,3 +104,10 @@ data/*.csv
 #ignorar los datos recolectados
 Corpus/*
 data/*.html
+
+#ignorar venv
+buscarPosteosFacebook/*
+
+#ignorar configuraciones
+config.json
+.vscode/settings.json
