@@ -4,18 +4,12 @@ Esta herramienta está conformada por un script en lenguaje Python. El mismo nav
 
 
 ## Dependencias
-Para utilizar el script es necesario instalar las siguientes librerias python:
-- BeautifulSoup4
-- Pandas
-- Selenium
-- Selenium Driver para Firefox
+Para utilizar el script es necesario configurar el venv e instalar las librerias necesarias con:
+- $ py -m venv env (Donde env es el nombre del ambiente virtual)
+- $ py -m pip install -r requirements.txt (Intalar todas las librerias necesarias)
 
-La instalacion puede hacerse utilizando pip de la siguiente manera:
+Por último es necesario instalar el Driver de selenium para firefox en el sistema con las siguientes instrucciones:
 - \$ su
-- \# pip3 install pandas
-- \# pip3 install selenium
-- \# pip3 install bs4
-- \# pip3 install lxml
 - \# installgeckodriver.sh
 
 
